@@ -11,6 +11,10 @@ part 'location_state.dart';
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
   StreamSubscription? positionStream;
   LocationBloc() : super(const LocationState()) {
+    on<OnStarFollowingUser>(
+        (event, emit) => emit(state.copyWith(followingUser: true)));
+    on<OnStopFollowingUser>(
+        (event, emit) => emit(state.copyWith(followingUser: false)));
     on<OnNewUserLocationEvent>((event, emit) {
       emit(state.copyWith(
         lastKnownLocation: event.newLocation,
@@ -21,20 +25,22 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   Future getCurrentPosition() async {
     final position = await Geolocator.getCurrentPosition();
-    add(OnNewUserLocationEvent(LatLng(position.latitude,position.longitude)));
+    add(OnNewUserLocationEvent(LatLng(position.latitude, position.longitude)));
     //retornar un objeto de tipo LatLng
   }
 
   void startFollowingUser() {
-    
+    add(OnStarFollowingUser());
     positionStream = Geolocator.getPositionStream().listen((event) {
       final position = event;
-      add(OnNewUserLocationEvent(LatLng(position.latitude,position.longitude)));
+      add(OnNewUserLocationEvent(
+          LatLng(position.latitude, position.longitude)));
     });
   }
 
   void stopFollowingUser() {
     positionStream?.cancel();
+    add(OnStopFollowingUser());
     print('stopFollowingUser');
   }
 

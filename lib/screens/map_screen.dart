@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:mapas/blocs/blocs.dart';
+import 'package:mapas/widgets/widgets.dart';
+
+import '../views/views.dart';
+
+
+
+
+
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -14,26 +23,43 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-     locationBloc = BlocProvider.of<LocationBloc>(context);
+    locationBloc = BlocProvider.of<LocationBloc>(context);
     //locationBloc.getCurrentPosition();
     locationBloc.startFollowingUser();
   }
 
   @override
   void dispose() {
-   
-    
-
     super.dispose();
     locationBloc.stopFollowingUser();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('MapScreen'),
-      ),
+    return Scaffold(body: BlocBuilder<LocationBloc, LocationState>(
+      builder: (context, state) {
+        if (state.lastKnownLocation == null) {
+          return const Center(
+            child: Text('Epere por Favor'),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Stack(
+            children: [
+              MapView(inialLocation: state.lastKnownLocation!,)
+            ],
+          ),
+        );
+      },
+    ),
+    floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    floatingActionButton: Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: const [
+        BtnCurrentLocation()
+      ],
+    ),
     );
   }
 }
