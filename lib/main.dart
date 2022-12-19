@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapas/blocs/gps/gps_bloc.dart';
+import 'package:mapas/blocs/blocs.dart';
 import 'package:mapas/screens/screens.dart';
 
 void main() {
   runApp(MultiBlocProvider(providers: [
-    BlocProvider(create:(context) => GpsBloc(),)
+    BlocProvider(create:(context) => GpsBloc(),),
+    BlocProvider(create:(context) => LocationBloc(),)
   ], child: const MapsApp()));
 }
 
