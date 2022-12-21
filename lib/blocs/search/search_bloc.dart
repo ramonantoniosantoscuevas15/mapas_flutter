@@ -6,8 +6,8 @@ part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc() : super(const SearchState()) {
-    on<SearchEvent>((event, emit) {
-      
-    });
+    on<OnActivatedManualMarketEvent>(
+        (event, emit) => emit(state.copyWith(displayManualMarket: true)));
+    on<OnDeactivateManualMarkerEvent>((event, emit) => emit( state.copyWith( displayManualMarket: false) ) );
   }
 }
