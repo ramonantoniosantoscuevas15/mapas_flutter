@@ -1,3 +1,5 @@
+export 'package:mapas/widgets/manual_marker.dart';
+
 export 'package:mapas/widgets/searchbar.dart';
 
 export 'package:mapas/widgets/btn_toggle_user_route.dart';

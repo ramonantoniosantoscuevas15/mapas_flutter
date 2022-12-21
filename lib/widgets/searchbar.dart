@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../delegate/delegates.dart';
 
-
 class Searchbar extends StatelessWidget {
   const Searchbar({super.key});
 
@@ -14,8 +13,11 @@ class Searchbar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30),
         width: double.infinity,
         child: GestureDetector(
-          onTap: () {
-            showSearch(context: context, delegate: SeachDestinationDelegate());
+          onTap: () async {
+            final result = await showSearch(
+                context: context, delegate: SeachDestinationDelegate());
+            if (result == null) return;
+            print(result);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
@@ -30,7 +32,7 @@ class Searchbar extends StatelessWidget {
                   )
                 ]),
             child: const Text(
-              '¿Donde Queres Ir?',
+              '¿Donde Quieres Ir?',
               style: TextStyle(color: Colors.black87),
             ),
           ),

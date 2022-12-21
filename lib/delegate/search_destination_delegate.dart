@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mapas/models/models.dart';
 
-class SeachDestinationDelegate extends SearchDelegate {
+class SeachDestinationDelegate extends SearchDelegate<SearchResult> {
   SeachDestinationDelegate() : super(searchFieldLabel: 'Buscar');
   @override
   List<Widget>? buildActions(BuildContext context) {
@@ -17,7 +18,8 @@ class SeachDestinationDelegate extends SearchDelegate {
   Widget? buildLeading(BuildContext context) {
     return IconButton(
         onPressed: () {
-          close(context, null);
+          final result = SearchResult(cancel: true);
+          close(context, result);
         },
         icon: const Icon(Icons.arrow_back_ios));
   }
@@ -36,9 +38,13 @@ class SeachDestinationDelegate extends SearchDelegate {
             Icons.location_on_outlined,
             color: Colors.black,
           ),
-          title: const Text('Colocal la Ubicacion Manualmente', style: TextStyle(color: Colors.black),),
+          title: const Text(
+            'Colocal la Ubicacion Manualmente',
+            style: TextStyle(color: Colors.black),
+          ),
           onTap: () {
-            close(context, null);
+            final result = SearchResult(cancel: false,manual: true);
+                close(context, result);
           },
         )
       ],
