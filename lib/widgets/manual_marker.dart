@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapas/helpers/helpers.dart';
 
 import '../blocs/blocs.dart';
 
@@ -25,6 +26,9 @@ class _ManualMarkerBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final searchBloc = BlocProvider.of<SearchBloc>(context);
+    final locationBloc = BlocProvider.of<LocationBloc>(context);
+    final mapBloc = BlocProvider.of<MapBloc>(context);
     return SizedBox(
       width: size.width,
       height: size.height,
@@ -52,7 +56,21 @@ class _ManualMarkerBody extends StatelessWidget {
                   elevation: 0,
                   height: 50,
                   shape: const StadiumBorder(),
-                  onPressed: () {},
+                  onPressed: () async {
+                    final start = locationBloc.state.lastKnownLocation;
+                    if (start == null) return;
+                    final end = mapBloc.mapCenter;
+                    if (end == null) return;
+                    showloadingMessage(context);
+                    
+                    final destination =
+                        await searchBloc.getCoorsStartToEnd(start, end);
+                    await mapBloc.drawRoutePolyline(destination);
+                    searchBloc.add(OnDeactivateManualMarkerEvent());
+                    
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                  },
                   child: const Text(
                     'Comfirmar destino',
                     style: TextStyle(
@@ -77,12 +95,10 @@ class _BtnBack extends StatelessWidget {
         maxRadius: 30,
         backgroundColor: Colors.white,
         child: IconButton(
-          icon: const Icon( Icons.arrow_back_ios_new, color: Colors.black ),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () {
-             BlocProvider.of<SearchBloc>(context).add(
-              OnDeactivateManualMarkerEvent()
-            );
-           
+            BlocProvider.of<SearchBloc>(context)
+                .add(OnDeactivateManualMarkerEvent());
           },
         ),
       ),

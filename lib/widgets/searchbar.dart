@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapas/blocs/blocs.dart';
@@ -5,21 +6,21 @@ import 'package:mapas/models/models.dart';
 
 import '../delegate/delegates.dart';
 
-class Searchbar extends StatelessWidget {
-  const Searchbar({super.key});
+class SearchBar extends StatelessWidget {
+  const SearchBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
-        return state.displayManualMarket ? const SizedBox() : const _SearchbarBody();
+        return state.displayManualMarket ? const SizedBox() : FadeInDown(child: const _SearchBarBody());
       },
     );
   }
 }
 
-class _SearchbarBody extends StatelessWidget {
-  const _SearchbarBody({super.key});
+class _SearchBarBody extends StatelessWidget {
+  const _SearchBarBody({Key? key}) : super(key: key);
   void onSearchResult(BuildContext context, SearchResult result) {
     final searchBloc = BlocProvider.of<SearchBloc>(context);
     if (result.manual == true) {
@@ -40,6 +41,7 @@ class _SearchbarBody extends StatelessWidget {
             final result = await showSearch(
                 context: context, delegate: SeachDestinationDelegate());
             if (result == null) return;
+            // ignore: use_build_context_synchronously
             onSearchResult(context, result);
           },
           child: Container(
