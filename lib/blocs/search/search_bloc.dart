@@ -15,7 +15,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         (event, emit) => emit(state.copyWith(displayManualMarket: true)));
     on<OnDeactivateManualMarkerEvent>(
         (event, emit) => emit(state.copyWith(displayManualMarket: false)));
-    on<OnNewPlacesFoundEvent>((event, emit) => emit(state.copyWith(places: event.places)));
+    on<OnNewPlacesFoundEvent>(
+        (event, emit) => emit(state.copyWith(places: event.places)));
+    on<AddToHistoryEvent>((event, emit) => emit(state.copyWith(history: [event.place, ...state.history])));
   }
   Future<RouteDestination> getCoorsStartToEnd(LatLng start, LatLng end) async {
     final trafficResponse = await trafficService.getCoorsStartToEnd(start, end);

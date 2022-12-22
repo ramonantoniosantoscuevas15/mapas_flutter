@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mapas/blocs/blocs.dart';
 import 'package:mapas/models/models.dart';
 
@@ -47,7 +48,15 @@ class SeachDestinationDelegate extends SearchDelegate<SearchResult> {
                 color: Colors.black,
               ),
               onTap: () {
-                print('enviar este lugar $place');
+                final result = SearchResult(
+                    cancel: false,
+                    manual: false,
+                    position: LatLng(place.center[1], place.center[0]),
+                    name: place.text,
+                    description: place.placeName);
+                searchBloc.add(AddToHistoryEvent(place));
+
+                close(context, result);
               },
             );
           },
@@ -59,6 +68,7 @@ class SeachDestinationDelegate extends SearchDelegate<SearchResult> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    final history = BlocProvider.of<SearchBloc>(context).state.history;
     return ListView(
       children: [
         ListTile(
@@ -74,7 +84,26 @@ class SeachDestinationDelegate extends SearchDelegate<SearchResult> {
             final result = SearchResult(cancel: false, manual: true);
             close(context, result);
           },
-        )
+        ),
+        ...history.map((place) => ListTile(
+           title: Text(place.text),
+              subtitle: Text(place.placeName!),
+              leading: const Icon(
+                Icons.history,
+                color: Colors.black,
+              ),
+              onTap: () {
+                final result = SearchResult(
+                    cancel: false,
+                    manual: false,
+                    position: LatLng(place.center[1], place.center[0]),
+                    name: place.text,
+                    description: place.placeName);
+                
+
+                  close(context, result);
+              },
+        ))
       ],
     );
   }

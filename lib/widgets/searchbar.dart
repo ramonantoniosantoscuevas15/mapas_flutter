@@ -13,7 +13,9 @@ class SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
-        return state.displayManualMarket ? const SizedBox() : FadeInDown(child: const _SearchBarBody());
+        return state.displayManualMarket
+            ? const SizedBox()
+            : FadeInDown(child: const _SearchBarBody());
       },
     );
   }
@@ -21,11 +23,19 @@ class SearchBar extends StatelessWidget {
 
 class _SearchBarBody extends StatelessWidget {
   const _SearchBarBody({Key? key}) : super(key: key);
-  void onSearchResult(BuildContext context, SearchResult result) {
+  void onSearchResult(BuildContext context, SearchResult result) async{
     final searchBloc = BlocProvider.of<SearchBloc>(context);
+    final mapBloc = BlocProvider.of<MapBloc>(context);
+    final locationBloc = BlocProvider.of<LocationBloc>(context);
     if (result.manual == true) {
       searchBloc.add(OnActivatedManualMarketEvent());
       return;
+    }
+
+    if (result.position != null) {
+      final destination = await searchBloc.getCoorsStartToEnd(locationBloc.state.lastKnownLocation!, result.position!);
+      await mapBloc.drawRoutePolyline(destination);
+
     }
   }
 
