@@ -7,6 +7,12 @@ abstract class SearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class OnActivatedManualMarketEvent extends SearchEvent{}
+class OnActivatedManualMarketEvent extends SearchEvent {}
 
 class OnDeactivateManualMarkerEvent extends SearchEvent {}
+
+class OnNewPlacesFoundEvent extends SearchEvent {
+  final List<Feature> places;
+
+  const OnNewPlacesFoundEvent(this.places);
+}

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapas/blocs/blocs.dart';
 import 'package:mapas/models/models.dart';
 
 class SeachDestinationDelegate extends SearchDelegate<SearchResult> {
@@ -26,7 +28,33 @@ class SeachDestinationDelegate extends SearchDelegate<SearchResult> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return const Text('buildResults');
+    final searchBloc = BlocProvider.of<SearchBloc>(context);
+    final proximity =
+        BlocProvider.of<LocationBloc>(context).state.lastKnownLocation!;
+    searchBloc.getPlacesByQuery(proximity, query);
+    return BlocBuilder<SearchBloc, SearchState>(
+      builder: (context, state) {
+        final places = state.places;
+        return ListView.separated(
+          itemCount: places.length,
+          itemBuilder: (context, i) {
+            final place = places[i];
+            return ListTile(
+              title: Text(place.text),
+              subtitle: Text(place.placeName!),
+              leading: const Icon(
+                Icons.place_outlined,
+                color: Colors.black,
+              ),
+              onTap: () {
+                print('enviar este lugar $place');
+              },
+            );
+          },
+          separatorBuilder: (context, i) => const Divider(),
+        );
+      },
+    );
   }
 
   @override
@@ -43,8 +71,8 @@ class SeachDestinationDelegate extends SearchDelegate<SearchResult> {
             style: TextStyle(color: Colors.black),
           ),
           onTap: () {
-            final result = SearchResult(cancel: false,manual: true);
-                close(context, result);
+            final result = SearchResult(cancel: false, manual: true);
+            close(context, result);
           },
         )
       ],
