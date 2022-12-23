@@ -3,10 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mapas/blocs/blocs.dart';
 
+// ignore: must_be_immutable
 class MapView extends StatelessWidget {
   final LatLng inialLocation;
-  Set<Polyline> polylines;
-   MapView({super.key, required this.inialLocation, required this.polylines});
+  final Set<Polyline> polylines;
+  final Set<Marker> markers;
+  const MapView({super.key, 
+  required this.inialLocation, 
+  required this.polylines,
+  required this.markers});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,8 @@ class MapView extends StatelessWidget {
       width: size.width,
       height: size.height,
       child: Listener(
-        onPointerMove: (pointerMoveEvent) => mapBloc.add(OnStopFollowingUserEvent()),
+        onPointerMove: (pointerMoveEvent) =>
+            mapBloc.add(OnStopFollowingUserEvent()),
         child: GoogleMap(
           initialCameraPosition: initialCamaraPosition,
           compassEnabled: false,
@@ -26,7 +32,9 @@ class MapView extends StatelessWidget {
           zoomControlsEnabled: false,
           myLocationButtonEnabled: false,
           polylines: polylines,
-          onMapCreated:(controller) => mapBloc.add(OnMapInitialzedEvent(controller))  ,
+          markers: markers,
+          onMapCreated: (controller) =>
+              mapBloc.add(OnMapInitialzedEvent(controller)),
           onCameraMove: (position) => mapBloc.mapCenter = position.target,
         ),
       ),

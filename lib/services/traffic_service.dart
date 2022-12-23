@@ -24,7 +24,8 @@ class TrafficService {
     return data;
   }
 
-  Future<List<Feature>> getResultsByQuery(LatLng proximity, String query) async {
+  Future<List<Feature>> getResultsByQuery(
+      LatLng proximity, String query) async {
     if (query.isEmpty) return [];
     final url = '$_basePlacesUrl/$query.json';
     final resp = await _dioPlaces.get(url, queryParameters: {
@@ -33,5 +34,12 @@ class TrafficService {
     final placesResponse = PlacesResponse.fromMap(resp.data);
 
     return placesResponse.features; //lugares
+  }
+
+  Future<Feature> getInformationByCoors(LatLng coors) async {
+    final url = '$_basePlacesUrl/${coors.longitude},${coors.latitude}.json';
+    final resp = await _dioPlaces.get(url, queryParameters: {'limit': 1});
+    final placesResponse = PlacesResponse.fromMap(resp.data);
+    return placesResponse.features[0];
   }
 }
